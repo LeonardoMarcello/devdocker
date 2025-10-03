@@ -15,8 +15,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 	&& apt-get install -y sudo \
 	&& echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
 	&& chmod 0440 /etc/sudoers.d/$USERNAME
-# switch from root to user
-USER $USERNAME
 
 # Add user to video group to allow acces to webcam
 RUN sudo usermod --append --groups video $USERNAME
@@ -65,7 +63,7 @@ RUN sudo apt install -y \
 # ====================================================================
 # 	INSTALL InterRealsense LIBRARIES
 # ====================================================================
-RUN apt-get update && 
+RUN apt-get update && \
     sudo mkdir -p /etc/apt/keyrings && \
     curl -sSf https://librealsense.intel.com/Debian/librealsense.pgp | sudo tee /etc/apt/keyrings/librealsense.pgp > /dev/null && \
     echo "deb [signed-by=/etc/apt/keyrings/librealsense.pgp] https://librealsense.intel.com/Debian/apt-repo $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/librealsense.list > /dev/null \
@@ -124,6 +122,9 @@ RUN pip3 install --upgrade \
 # ====================================================================
 # 	SETUP COMMAND
 # ====================================================================
+# switch from root to user
+USER $USERNAME
+
 #ENTRYPOINT catkin_make && source devel/setup.bash
 #ENTRYPOINT ["source", "devel/setup.bash"]
 
